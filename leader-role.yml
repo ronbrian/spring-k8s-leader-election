@@ -1,0 +1,44 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: leader
+  labels:
+    app: kubernetes-leader-election-example
+    group: org.springframework.cloud
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  - configmaps
+  verbs:
+  - '*'
+
+
+
+- - -
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: demoapp-deployment
+  labels:
+    app: kubernetes-leader-election-example
+    group: org.springframework.cloud
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: kubernetes-leader-election-example
+      group: org.springframework.cloud
+  template:
+    metadata:
+      labels:
+        app: kubernetes-leader-election-example
+        group: org.springframework.cloud
+    spec:
+      containers:
+      - name: demoapp
+        image: ronbrian/leaderelectiondemo
+        ports:
+        - containerPort: 8089
